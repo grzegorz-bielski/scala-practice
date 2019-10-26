@@ -17,6 +17,10 @@ object ScalaPlayground extends App {
 
   val someone = Person(new Person("fe"), new Person("feff"))
 
+
   // Scala applications - scala object with
   //  def main(args: Array[String]): Unit
 }
+
+object Sth {}
+object SthElse {}

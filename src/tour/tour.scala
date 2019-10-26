@@ -338,4 +338,185 @@ object Tour extends App {
     printCat(catPrinter)
     printCat(animalPrinter)
   }
+
+  // type bounds
+
+  // A is a subtype of Animal
+  class SomeClass[A <: Animal](a: Animal) {}
+
+  // U is a supertype of B
+
+  trait Node[+B] {
+    def prepend[U >: B](elem: U): Node[U]
+  }
+
+  case class ListNode[+B](h: B, t: Node[B]) extends Node[B] {
+    def prepend[U >: B](elem: U): ListNode[U] = ListNode(elem, this)
+    def head: B = h
+    def tail: Node[B] = t
+  }
+
+  case class Nil3[+B]() extends Node[B] {
+    def prepend[U >: B](elem: U): ListNode[U] = ListNode(elem, this)
+  }
+
+  // inner classes
+
+  // by default inner classes are bound to the enclosing object
+  // we can't mix Nodes of this graph instance with nodes of other graph instance
+  // can be changed with: List[Node] -> List[Graph#Node]
+  class Graph {
+    class Node {
+      var connectedNodes = List[Node]()
+      def connectTo(node: Node): Unit = {
+        if (!connectedNodes.exists(node.equals)) {
+          connectedNodes = node :: connectedNodes
+        }
+      }
+    }
+    var nodes = List[Node]()
+    def newNode: Node = {
+      val res = new Node
+      nodes = res :: nodes
+      res
+    }
+  }
+
+  // abstract type members
+
+  // in most cases could be replaced with parameters
+
+  trait Buffer {
+    type T
+    val element: T
+  }
+
+  abstract class SeqBuffer extends Buffer {
+    type U
+    type T <: Seq[U]
+    def length = element.length
+  }
+  abstract class IntSeqBuffer extends SeqBuffer {
+    type U = Int
+  }
+
+  def newIntSeqBuf(elems: (Int, Int)): Unit = {
+    // anonymous class
+    new IntSeqBuffer {
+      type T = List[U]
+      val element = List(elems._1, elems._2)
+    }
+  }
+
+  abstract class Buffer2[+T] {
+    val element: T
+  }
+  // T is a subtype of Seq[U] with covariance behaviour
+  abstract class SeqBuffer2[U, +T <: Seq[U]] extends Buffer2[T] {
+    def length = element.length
+  }
+  def newIntSeqBuf2(elems: (Int, Int)): SeqBuffer2[Int, Seq[Int]] = {
+    new SeqBuffer2[Int, List[Int]] {
+      val element = List(elems._1)
+    }
+  }
+
+  // compound types
+
+  trait Cloneable extends java.lang.Cloneable {
+    override def clone(): Cloneable = {
+      super.clone().asInstanceOf[Cloneable]
+    }
+  }
+  trait Resetable {
+    def rest: Unit
+  }
+  def cloneAndReset(obj: Cloneable with Resetable): Unit = {}
+
+  // self-types
+
+  // a way to declare that trait must be mixed into another trait
+  // a way to narrow type of `this`
+
+  trait Userr {
+    def username: String
+  }
+  trait Tweeter {
+    this: Userr =>
+    def tweet(text: String) = println(s"$username: $text")
+  }
+  class VerifiedTweeter(val username_ : String) extends Tweeter with Userr {
+    def username = s"real $username_"
+  }
+
+  // implicit parameters
+  abstract class Monoid[A] {
+    def add(x: A, y: A): A
+    def unit: A
+  }
+
+  object ImplicitTest {
+    implicit val strMonoid: Monoid[String] = new Monoid[String] {
+      def add(x: String, y: String): String = x concat y
+      def unit: String = ""
+    }
+
+    implicit val intMonoid: Monoid[Int] = new Monoid[Int] {
+      def add(x: Int, y: Int): Int = x + y
+      def unit: Int = 0
+    }
+
+    def sum[A](xs: List[A])(implicit m: Monoid[A]): A = {
+      if (xs.isEmpty) m.unit
+      else m.add(xs.head, sum(xs.tail))
+    }
+
+    sum(List(1, 2, 3))
+    sum(List("a", "b", "c"))
+  }
+
+  // implicit conversions
+
+  import scala.language.implicitConversions
+
+  // implicitly convert one type to another
+  implicit def int2Integer(x: Int) = java.lang.Integer.valueOf(x)
+
+  implicit def list2Ordered[A](x: List[A])(implicit elem2ordered: A => Ordered[A]): Ordered[List[A]] =
+    new Ordered[List[A]] {
+      override def compare(that: List[A]): Int = 1
+    }
+
+  // by name parameters
+
+  // evaluated only when used
+  def calc(input: => Int) = input * 37
+
+  def whileLoop(cond: => Boolean)(body: => Unit): Unit = {
+    if (cond) {
+      body
+      whileLoop(cond)(body)
+    }
+  }
+
+  var i = 2
+  whileLoop(i > 0) {
+    println(i)
+    i -= 1
+  }
+
+}
+
+// annotations
+
+// Annotations associate meta-information with definitions.
+
+object Ann extends App {
+  @deprecated("deprecation message", "release # which deprecates method")
+  def hello = "hola"
+
+//  @tailrec ensures that a method is tail-recursive
+
+//  @inline - insert the code in a method's body
+
 }
