@@ -1,14 +1,14 @@
 package lecture.oop
 
 object exep extends App {
-//  val weirdVal = throw new NullPointerException
+  //  val weirdVal = throw new NullPointerException
 
   // java.lang.OutOfMemoryError
   // val arr = Array.ofDim(Int.MaxValue)
 
   // java.lang.StackOverflowError
-//  def infinite: Int = 1 + infinite
-//  infinite
+  //  def infinite: Int = 1 + infinite
+  //  infinite
 
   // throwable classes
   // Error and Exception are mayor  Throwable subtypes
