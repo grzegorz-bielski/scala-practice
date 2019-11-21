@@ -65,7 +65,33 @@ object func extends App {
   val plus20 = nTimesPrim(adder2, 10)
   val xyz = plus20(1)
 
+}
+
+object compreh extends App {
   // map, flatMap, for comprehensions
+
+  val nums = List(1, 2, 3, 4)
+  val strs = List('a', 'b', 'c', 'd')
+  val things = List("xx", "yy")
+  nums.head
+  nums.tail
+
+  nums.map { x => x * 2}
+
+  nums.flatMap(x => List(x, x))
+  println(nums.flatMap(x => strs.flatMap(y => things.map(t => s"$x$y$t"))))
+
+  val res = for {
+    x <- nums if x % 2 == 0
+    y <- strs
+    t <- things
+  } yield s"$x$y$t"
+
+
+  for {
+    n <- nums
+  } println(n)
+
 
 }
 

@@ -2,6 +2,7 @@ package exercise
 
 import scala.annotation.tailrec
 
+// accept subclasses
 abstract class XCollection[+A] {
   def head: Option[A]
   def tail: Option[XCollection[A]]
@@ -136,11 +137,15 @@ object Test extends App {
     x => println(x)
   }
 
-  //  val mapped = myList.map(new Function1[Int, Int] {
-    ////    override def apply(a: Int): Int = a * 2
-    ////  })
+  val res = for {
+    n <- myList
+    m <-  myList2
+  } yield n + m.toString
 
-//  def compose(f, g)
+  //  val mapped = myList.map(new Function1[Int, Int] {
+  ////    override def apply(a: Int): Int = a * 2
+  ////  })
+
 
   def toCurry[T](f: (T, T) => T): T => T => T = x => y => f(x, y)
   def fromCurry[T](f: T => T => T): (T, T) => T = (x, y) => f(x)(y)
