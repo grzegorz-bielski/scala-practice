@@ -92,6 +92,30 @@ object compreh extends App {
     n <- nums
   } println(n)
 
+  def singleArgMethod(arg: Int): String = s"$arg sth"
+
+  val desc = singleArgMethod {
+    val x = 40
+    x + 42
+  }
+
+  // compiler can convert single methods traits / abstract classes to lambdas
+  trait Action {
+    def act(x: Int): Int
+  }
+
+  val funcInstance: Action = (a: Int) => a
+
+  class Kek {
+    def `some method` = "hey"
+  }
+
+  class Composite[A, B]
+  val composite: Int Composite String = ???
+
+  class -->[A, B]
+  val towards: Int --> String = ???
+
 
 }
 
