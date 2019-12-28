@@ -7,13 +7,13 @@ trait Attempt[+A] {
 object Attempt {
   def apply[A](a: => A): Attempt[A] =
     try {
-      Success(a)
+      SuccessA(a)
     } catch {
       case e: Throwable => Fail(e)
     }
 }
 
-case class Success[+A](value: A) extends Attempt[A] {
+case class SuccessA[+A](value: A) extends Attempt[A] {
   def flatMap[B](f: A => Attempt[B]): Attempt[B] =
     try {
       f(value)
@@ -22,7 +22,7 @@ case class Success[+A](value: A) extends Attempt[A] {
     }
 
   def map[B](f: A => B): Attempt[B] =
-    flatMap(a => Success(f(a)))
+    flatMap(a => SuccessA(f(a)))
 
   def flatten[B >: A](a: Attempt[B]): Attempt[B] =
     flatMap(_ => a)
