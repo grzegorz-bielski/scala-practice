@@ -1,6 +1,6 @@
 package lecture.Implicits
 
-import java.{util, util => ju}
+import java.{util => ju}
 
 object ScalaJavaConv extends App {
   import collection.JavaConverters._
